@@ -6,6 +6,10 @@ import { convertToJatoLabels, validateJatoFilters } from '../../utils/jatoConver
 import { scanJatoDatabase, validateScanFilters, getNoMatchesMessage } from '../../utils/jatoScanner'
 import ChatResultCard from '../chat/ChatResultCard'
 
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+
 // Format claude message
 const formatMessage = (text) => {
   return text.split('\n').map((line, i) => (
@@ -105,7 +109,7 @@ const ChatPage = () => {
 
       // Step 6: Execute vector search via backend API
       console.log("🔍 Calling vector search API...");
-      const vectorResponse = await fetch('http://localhost:3001/api/vector-search', {
+      const vectorResponse = await fetch(`${API_URL}/api/vector-search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
