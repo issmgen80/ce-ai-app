@@ -34,7 +34,7 @@ class ResultDataLoader {
       // Load reviews data
       const reviewsPath = path.join(
         __dirname,
-        "../../frontend/src/data/carexpert_reviews_enhanced_matches.json"
+        "../data/carexpert_reviews_enhanced_matches.json"
       );
       const reviewsData = fs.readFileSync(reviewsPath, "utf8");
       this.reviewsData = JSON.parse(reviewsData);
