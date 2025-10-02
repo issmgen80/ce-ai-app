@@ -3,7 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const vectorSearchRoutes = require("./routes/vectorSearch");
+console.log("Loading conversation routes...");
 const conversationRoutes = require("./routes/conversation");
+console.log("Conversation routes loaded successfully");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
