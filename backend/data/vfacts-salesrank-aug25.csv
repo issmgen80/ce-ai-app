@@ -1,0 +1,448 @@
+Make Model,Sales volume
+Ford Ranger 4X4,"35,097"
+Toyota RAV4,"32,564"
+Toyota Hilux 4X4,"30,203"
+Toyota Prado,"19,955"
+Ford Everest,"16,922"
+Mazda CX-5,"15,304"
+Hyundai Kona,"15,127"
+Mitsubishi Outlander,"15,043"
+Isuzu Ute D-Max 4X4,"14,733"
+MG ZS,"14,419"
+Kia Sportage,"13,675"
+Hyundai Tucson,"13,526"
+Toyota Corolla,"13,145"
+BYD Shark 6,"12,918"
+GWM Haval Jolion,"12,278"
+Chery Tiggo 4 Pro,"11,841"
+Nissan X-Trail,"10,815"
+Mitsubishi Triton 4X4,"10,799"
+Mazda CX-3,"10,783"
+Isuzu Ute MU-X,"10,362"
+Subaru Forester,"9,753"
+GWM Haval H6,"9,224"
+Mazda CX-30,"8,434"
+Toyota Corolla Cross,"8,090"
+Mitsubishi ASX,"8,075"
+Mazda BT-50 4X4,"8,011"
+Toyota Landcruiser Wagon,"7,722"
+Toyota Yaris Cross,"7,616"
+Subaru Crosstrek,"7,528"
+Hyundai i30,"7,447"
+Kia Carnival,"7,312"
+Mazda3,"7,191"
+Toyota Landcruiser PU/CC,"7,091"
+Toyota Hiace Van,"6,953"
+BYD Sealion 7,"6,596"
+Toyota Camry,"6,585"
+Kia Sorento,"6,396"
+MG MG3,"6,188"
+Kia Seltos,"6,128"
+BYD Sealion 6,"6,050"
+Toyota Kluger,"6,040"
+Subaru Outback,"5,851"
+Toyota Hilux 4X2,"5,563"
+Nissan Navara 4X4,"5,396"
+Hyundai Venue,"5,260"
+Suzuki Jimny,"5,237"
+Kia Picanto,"4,991"
+Nissan Patrol Wagon,"4,684"
+Isuzu N-Series (LD),"4,545"
+Hyundai Santa Fe,"4,380"
+GWM Cannon 4X4,"4,350"
+Kia Stonic,"4,275"
+Lexus NX,"4,074"
+Isuzu Ute D-Max 4X2,"3,997"
+Honda CR-V,"3,961"
+Volkswagen Amarok 4X4,"3,928"
+Kia K4,"3,855"
+Mitsubishi Pajero Sport,"3,758"
+Mitsubishi Eclipse Cross,"3,745"
+Volkswagen T-Roc,"3,677"
+Mazda CX-60,"3,616"
+Kia EV5,"3,594"
+Ford Mustang,"3,571"
+Chery C5/E5 & Omoda 5,"3,516"
+BMW X1,"3,508"
+Nissan Qashqai,"3,407"
+Honda HR-V,"3,272"
+GWM Tank 300,"3,271"
+LDV T60/T60 MAX 4X4,"3,218"
+BMW X3,"3,189"
+Chery Tiggo 7 Pro,"3,154"
+Toyota Hiace Commuter,"2,969"
+Mazda2,"2,964"
+Mercedes-Benz GLC-Class Wagon,"2,746"
+Geely EX5,"2,736"
+BYD Atto 3,"2,724"
+Land Rover Defender,"2,692"
+Mazda CX-80,"2,660"
+Volkswagen Tiguan Allspace,"2,623"
+Mercedes-Benz Sprinter,"2,619"
+MG HS,"2,564"
+Honda ZR-V,"2,550"
+MG MG4,"2,533"
+Suzuki Swift,"2,517"
+BYD Seal,"2,505"
+BMW X5,"2,491"
+Audi Q3,"2,456"
+Volkswagen Tiguan,"2,424"
+Mercedes-Benz GLA-Class,"2,357"
+Toyota Fortuner,"2,353"
+Isuzu N-Series (MD),"2,314"
+Toyota C-HR,"2,274"
+Volkswagen Golf,"2,225"
+LDV D90,"2,199"
+Kenworth,"2,181"
+Ford Transit Custom,"2,160"
+Mazda BT-50 4X2,"2,104"
+Ford Ranger 4X2,"2,086"
+GWM Ute 4X4,"2,073"
+Chery Tiggo 8 Pro,"2,066"
+BYD Dolphin,"2,046"
+Audi Q5,"2,040"
+Toyota Yaris,"2,034"
+Hyundai Staria Load,"1,959"
+RAM 1500,"1,877"
+Porsche Macan,"1,796"
+Volvo XC40,"1,771"
+Kia EV3,"1,699"
+LDV Deliver 9 / eDeliver 9,"1,659"
+Suzuki Vitara,"1,609"
+Kia Tasman 4X4,"1,609"
+Land Rover Range Rover Sport,"1,591"
+Hino (MD),"1,576"
+GWM Cannon Alpha,"1,549"
+MINI Countryman,"1,527"
+MINI Cooper,"1,525"
+Isuzu (HD),"1,524"
+MG MG5,"1,514"
+Volvo Truck (HD),"1,512"
+Lexus LBX,"1,512"
+BMW X2,"1,512"
+Mitsubishi Triton 4X2,"1,493"
+Chevrolet Silverado,"1,480"
+KGM Ssangyong Musso/MusXLV 4X4,"1,446"
+Subaru WRX,"1,425"
+Lexus RX,"1,410"
+Hyundai Palisade,"1,382"
+Renault Master,"1,350"
+Audi A3,"1,332"
+Mercedes-Benz A-Class,"1,329"
+Omoda Jaecoo J7,"1,297"
+LDV G10/G10+,"1,253"
+Ford Transit Heavy,"1,235"
+Fuso Canter (LD),"1,219"
+Mercedes-Benz GLE-Class Wagon,"1,216"
+Volvo XC60,"1,198"
+BMW 1 Series,"1,173"
+BMW 3 Series,"1,167"
+JAC T9 4X4,"1,146"
+Subaru Impreza,"1,143"
+Kia Cerato,"1,094"
+Mercedes-Benz GLC-Class Coupe,"1,092"
+Volkswagen T-Cross,"1,067"
+KGM Ssangyong Rexton,"1,044"
+GWM Tank 500,"1,021"
+CUPRA Formentor,"1,013"
+Mercedes-Benz C-Class,997
+Audi Q7,986
+Fiat Ducato,966
+Hyundai i20,945
+Chevrolet Silverado HD,929
+Hino (LD),894
+Volvo EX30,869
+Skoda Kodiaq,861
+Mazda6,820
+Lexus UX,798
+MG S5,798
+LDV Deliver 7 / eDeliver7,780
+Genesis GV70,779
+Hyundai Staria,776
+BMW 2 Series Coupe/Conv,760
+Mercedes-Benz EQE SUV,760
+Lexus GX,752
+Scania (HD),745
+BMW X7,709
+Mercedes-Benz GLB-Class,691
+BMW i4,680
+Renault Koleos,676
+Audi Q4 e-tron,660
+Porsche Cayenne Coupe,654
+Lexus ES,644
+Mercedes-Benz CLE-Class,639
+Suzuki Ignis,632
+Mercedes-Benz EQA,630
+Skoda Kamiq,619
+Audi Q2,618
+Jeep Grand Cherokee,597
+Toyota bZ4X,596
+Iveco C/C (LD),593
+Volkswagen Touareg,585
+Renault Trafic,582
+Fuso Fighter (MD),582
+Volkswagen Caddy Cargo Van,581
+Volkswagen Polo,578
+Mercedes (HD),575
+Mazda MX5,565
+Nissan Pathfinder,565
+Toyota Tundra,564
+Mercedes-Benz EQB,561
+Honda Civic,553
+Volkswagen ID.4,552
+Ford F150,548
+Subaru BRZ,539
+Zeekr X,527
+Toyota GR86 / 86,526
+Ford Tourneo,521
+Nissan Juke,520
+Fuso F-Series (HD),515
+BMW X6,514
+Hyundai Ioniq 5,502
+Mazda CX-90,493
+Skoda Octavia,487
+Volvo XC90,484
+MINI Aceman,483
+Toyota Coaster,481
+MG QS,475
+Hino (HD),468
+Mack (HD),466
+Porsche Cayenne Wagon,447
+Porsche 911,446
+Mercedes-Benz GLS-Class,443
+BMW 2 Series Gran Coupe,442
+GWM Ora,432
+Land Rover Range Rover Evoque,398
+BMW 4 Series Coupe/Conv,394
+Lexus LX,391
+Suzuki S-Cross,389
+Mercedes-Benz Vito / eVito Van,387
+Leapmotor C10,381
+Audi A5,378
+Mercedes-Benz E-Class,374
+RAM 2500,359
+Mercedes-Benz CLA-Class,342
+DAF (HD),330
+Kia Niro,329
+BMW iX,321
+Skoda Karoq,314
+Audi Q8,314
+CUPRA Born,313
+Volkswagen Crafter,309
+Jeep Wrangler,306
+Mercedes-Benz G-Class,306
+Kia EV6,300
+Nissan Navara 4X2,299
+Audi A1,297
+Mercedes-Benz GLE-Class Coupe,296
+UD Trucks (HD),295
+Land Rover Discovery,294
+Peugeot Partner / E-Partner,292
+BMW i5,292
+Land Rover Range Rover,285
+Hyundai Inster,282
+Fiat 500 / Abarth,278
+Volkswagen ID. Buzz,277
+Ford Mustang Mach-E,275
+Omoda Jaecoo J8,271
+BMW X4,266
+Iveco (HD),265
+Hyundai Sonata,261
+Land Rover Discovery Sport,261
+Jeep Gladiator,257
+Iveco Van (LD),252
+Land Rover Range Rover Velar,249
+Mazda CX-70,248
+Jaguar F-Pace,244
+BMW 5 Series,243
+CUPRA Tavascan,238
+Audi Q6 e-tron,234
+KGM SsangYong Torres,228
+MINI Cabrio,224
+LDV Deliver 9 Bus,221
+Kia EV9,213
+Skoda Fabia,210
+MAN (HD),200
+Peugeot 3008 / E3008,188
+Volkswagen Multivan,187
+Lexus LM,183
+Volkswagen Transporter,180
+Volkswagen ID.5,178
+Mercedes-Benz V-Class,175
+Maserati Grecale,170
+Volvo C40,165
+Renault Megane E-Tech,165
+CUPRA Leon,163
+Renault Arkana,163
+GMC Yukon,162
+LDV Terron 9,161
+LDV Mifa,159
+Jaguar E-Pace,156
+Peugeot Expert / E-Expert,155
+Deepal S07,155
+Porsche Cayman,153
+Chevrolet Corvette Stingray,153
+Skoda Enyaq,149
+Alfa Romeo Giulia,147
+Volvo EX90,147
+Volkswagen Tayron,144
+Porsche Taycan,142
+Renault Kangoo,140
+Skoda Superb,140
+Ford Transit Bus,138
+Subaru Solterra,137
+Toyota Supra,132
+CUPRA Terramar,132
+Jeep Compass,131
+Genesis GV80 Wagon,131
+Peugeot 2008,125
+Audi A6,124
+Volkswagen ID. Buzz Cargo,118
+Porsche Boxster,117
+Nissan Z,114
+Lamborghini Urus,114
+GWM Haval H7,114
+Ferrari Coupe/Conv,113
+Jeep Avenger,113
+KGM SsangYong Korando,111
+Alfa Romeo Tonale,111
+Western Star (HD),110
+Suzuki Fronx,104
+Mercedes-Benz EQE,99
+Skoda Scala,97
+Mercedes-AMG GT Cpe/Conv,96
+Mercedes-Benz Vito/ eVito Tour,95
+KGM Ssangyong Actyon,93
+Volvo V60 Cross Country,92
+Hyundai EX4,89
+Freightliner (HD),88
+Hyundai Ioniq 6,87
+Kia Tasman 4X2,84
+CUPRA Ateca,83
+Alfa Romeo Stelvio,83
+BMW XM,83
+Renault Duster,83
+Zeekr 009,83
+Volkswagen Caddy,80
+Aston Martin Coupe/Conv,79
+GWM Cannon 4X2,78
+Honda Accord,75
+Lamborghini Coupe/Conv,72
+Porsche Panamera,71
+Peugeot 408,70
+Dennis Eagle (HD),67
+Volkswagen Passat,66
+Iveco (MD),64
+Mercedes-Benz S-Class,63
+Nissan Leaf,62
+Mercedes-Benz EQS SUV,61
+Peugeot 308/e308,61
+Mercedes-Benz Sprinter Bus,58
+Omoda Jaecoo Omoda 9,56
+Genesis GV80 Coupe,52
+MG IM6,50
+McLaren Coupe/Conv,47
+UD Trucks (MD),45
+Mercedes (MD),44
+Peugeot 5008,43
+BMW Z4,42
+Lexus LC,41
+Lexus RZ,40
+Lotus Emira,40
+Aston Martin DBX,40
+MG Cyberster,40
+Hyundai EX9,39
+LDV V80,38
+Bentley Coupe/Conv,38
+Volvo S60,37
+Bentley Bentayga,36
+Audi A7,35
+Nissan Ariya,35
+Audi Q8 e-tron,34
+Toyota Granvia,33
+Renault Master Bus,33
+Foton Mobility T5,32
+Genesis G80,31
+BMW 7 Series,31
+Mercedes-Benz EQV,30
+MAN (MD),29
+Ferrari Purosangue,28
+MG IM5,28
+Ford Escape,27
+Audi A4,26
+Genesis G70,26
+Skoda Elroq,25
+Volvo Truck (MD),24
+Chevrolet Corvette Z06,23
+Audi e-tron GT,23
+Hyundai Pavise,22
+Rolls-Royce Cullinan,22
+BMW i7,22
+Hyundai Ioniq 9,20
+BMW 4 Series Gran Coupe,19
+Jaguar F-Type,18
+Hyundai EX10,18
+Mercedes-Benz SL-Class,18
+Volkswagen California,17
+Peugeot Boxer,17
+Hyundai EX8,17
+Chevrolet Corvette E-Ray,16
+BMW 8 Series Gran Coupe,15
+BMW 8 Series,15
+Genesis GV60,14
+Rolls-Royce Sedan,13
+Maserati Coupe/Conv,11
+DAF (MD),11
+Rolls-Royce Coupe/Conv,10
+Mazda CX-8,9
+LDV T60/T60 EV 4X2,9
+GWM Ute 4X2,8
+Lexus LS,8
+Renault Captur,7
+Maserati Ghibli,7
+RAM 3500,7
+Lotus Eletre,6
+Bentley Sedan,6
+Citroen C3,6
+Mazda MX-30,5
+Peugeot 5008 (Gen 2),4
+Maserati Levante,4
+Peugeot 208/e208,4
+Volkswagen Passat Alltrack,3
+Jaguar XE,3
+Hyundai Mighty,3
+Jaguar I-Pace,3
+Lotus Emeya,3
+Mercedes-AMG GT 4D,3
+Audi A8,3
+Volkswagen Caravelle,3
+LDV Mifa9,3
+Peugeot 508,2
+Citroen C5 X,2
+Toyota Mirai,2
+Mercedes-Benz EQS,2
+Ford Puma,1
+Mazda CX-9,1
+Renault Megane,1
+Mercedes-Benz E-Class Cpe/Conv,1
+Foton Mobility (HD),1
+Citroen C5 Aircross,0
+Citroen C4,0
+Mercedes-Benz Marco Polo,0
+Mercedes-Benz EQC,0
+Volkswagen Arteon,0
+Mercedes (LD),0
+Tesla Model Y,0
+Tesla Model 3,0
+Polestar 2,0
+MINI Clubman,0
+Audi TT,0
+Mercedes-Benz C-Class Cpe/Conv,0
+Jaguar XF,0
+SEA Electric (MD),0
+Dodge Journey,0
+BMW 6 Series GT,0
+SEA Electric (HD),0
+Freightliner (MD),0
+Mercedes-Benz B-Class,0
+Hyundai Nexo,0
