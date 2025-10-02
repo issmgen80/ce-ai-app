@@ -9,10 +9,12 @@ const openai = new OpenAI({
 
 // Initialize PostgreSQL connection pool
 const pgPool = new Pool({
-  user: process.env.USER,
-  host: "localhost",
-  database: "carexpert_vectors",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes("railway.app")
+    ? {
+        rejectUnauthorized: false,
+      }
+    : false,
 });
 
 class VehicleSearch {
