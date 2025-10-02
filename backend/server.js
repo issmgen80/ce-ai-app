@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const vectorSearchRoutes = require("./routes/vectorSearch");
+const conversationRoutes = require("./routes/conversation");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,6 +19,7 @@ app.get("/health", (req, res) => {
 
 // Vector search routes
 app.use("/api", vectorSearchRoutes);
+app.use("/api", conversationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
