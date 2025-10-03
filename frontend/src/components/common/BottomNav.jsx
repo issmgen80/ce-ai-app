@@ -5,12 +5,12 @@ const BottomNav = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const navItems = [
-    { id: 'find', label: 'Find', icon: Search, path: '/find/budget' },
-    { id: 'ai', label: 'AI', icon: MessageCircle, path: '/ai' },
-    { id: 'saved', label: 'Saved', icon: Star, path: '/saved' },
-    { id: 'profile', label: 'Profile', icon: User, path: '/profile' }
-  ]
+const navItems = [
+  { id: 'find', label: 'Find', icon: Search, path: '/find/budget', disabled: true },
+  { id: 'ai', label: 'AI', icon: MessageCircle, path: '/ai' },
+  { id: 'saved', label: 'Saved', icon: Star, path: '/saved', disabled: true },
+  { id: 'profile', label: 'Profile', icon: User, path: '/profile', disabled: true }
+]
 
   const isActive = (path) => {
     if (path === '/find/budget') {
@@ -25,13 +25,23 @@ const BottomNav = () => {
         {navItems.map((item) => {
           const IconComponent = item.icon
           return (
-            <button
+            /*<button
               key={item.id}
               onClick={() => navigate(item.path)}
               className={`flex flex-col items-center transition-colors duration-200 ${
                 isActive(item.path) ? 'text-carexpert-red' : 'text-gray-500'
               }`}
-            >
+            >*/
+
+            <button
+  key={item.id}
+  onClick={() => !item.disabled && navigate(item.path)}
+  disabled={item.disabled}
+  className={`flex flex-col items-center transition-colors duration-200 ${
+    item.disabled ? 'text-gray-300 cursor-not-allowed' :
+    isActive(item.path) ? 'text-carexpert-red' : 'text-gray-500'
+  }`}
+>
               <IconComponent size={24} className="mb-1" />
               <span className="text-xs font-medium">{item.label}</span>
             </button>

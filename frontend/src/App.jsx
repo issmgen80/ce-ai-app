@@ -22,7 +22,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-carexpert-off-white">
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<ChatPage />} />
           <Route path="/find/budget" element={<BudgetStep />} />
           <Route path="/find/use-cases" element={<UseCasesStep />} />
           <Route path="/find/body" element={<BodyStep />} />
