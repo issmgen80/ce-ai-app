@@ -13,10 +13,27 @@ const ChatResultCard = ({ vehicle, rank }) => {
     }).format(price);
   };
 
-  const capitalize = (str) => {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+ 
+
+  const formatFuelType = (fuelType) => {
+  if (!fuelType) return 'Unknown';
+  
+  if (fuelType === 'plug_in_hybrid') return 'Plug-in Hybrid';
+  
+  return fuelType.charAt(0).toUpperCase() + fuelType.slice(1).toLowerCase();
+};
+
+const formatBodyType = (bodyType) => {
+  if (!bodyType) return 'Unknown';
+  
+  const typeMap = {
+    'suv': 'SUV',
+    'hatchback': 'Hatch',
   };
+  
+  const normalized = bodyType.toLowerCase();
+  return typeMap[normalized] || bodyType.charAt(0).toUpperCase() + bodyType.slice(1).toLowerCase();
+};
 
   const getRatingColor = (rating) => {
     switch (rating) {
@@ -45,11 +62,11 @@ const ChatResultCard = ({ vehicle, rank }) => {
             {/* Specs row */}
             <div className="flex gap-2 text-xs">
               <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                {capitalize(vehicle.bodyType)}
-              </span>
+  {formatBodyType(vehicle.bodyType)}
+</span>
               <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                {capitalize(vehicle.fuelType)}
-              </span>
+  {formatFuelType(vehicle.fuelType)}
+</span>
               <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
                 {vehicle.seats} seats
               </span>
