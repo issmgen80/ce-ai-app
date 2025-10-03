@@ -10,7 +10,6 @@ class ResultDataLoader {
   constructor() {
     this.jatoDataset = null;
     this.reviewsData = null;
-    this.carexpertUrls = null;
   }
 
   async initialize() {
@@ -18,7 +17,16 @@ class ResultDataLoader {
       console.log("📦 Initializing result data loader...");
 
       // Load JATO dataset
+
       this.jatoDataset = loadJatoDataset();
+
+      /* const jatoPath = path.join(
+        __dirname,
+        "../../frontend/src/data/final-dataset-with-features.json"
+      );
+      const jatoData = fs.readFileSync(jatoPath, "utf8");
+      this.jatoDataset = JSON.parse(jatoData); */
+
       console.log(
         `✅ Loaded JATO dataset: ${this.jatoDataset.length} vehicles`
       );
@@ -31,37 +39,6 @@ class ResultDataLoader {
       const reviewsData = fs.readFileSync(reviewsPath, "utf8");
       this.reviewsData = JSON.parse(reviewsData);
       console.log(`✅ Loaded reviews: ${this.reviewsData.length} entries`);
-
-      // Load CarExpert URLs mapping
-      const urlCsvPath = path.join(
-        __dirname,
-        "../data/jato_carexpert_urls_edited.csv"
-      );
-      const urlCsvData = fs.readFileSync(urlCsvPath, "utf8");
-
-      // Parse CSV into lookup map
-      this.carexpertUrls = new Map();
-      const lines = urlCsvData.split("\n").slice(1); // Skip header
-
-      lines.forEach((line) => {
-        if (!line.trim()) return;
-
-        // Parse CSV (handles quoted fields)
-        const matches = line.match(
-          /"([^"]*)","([^"]*)","([^"]*)","([^"]*)","([^"]*)","([^"]*)"/
-        );
-        if (matches) {
-          const [, jatoMake, jatoModel, ceMake, ceModel, url, status] = matches;
-          if (status === "MATCHED" && url) {
-            const key = `${jatoMake.toLowerCase()}_${jatoModel.toLowerCase()}`;
-            this.carexpertUrls.set(key, url);
-          }
-        }
-      });
-
-      console.log(
-        `✅ Loaded CarExpert URLs: ${this.carexpertUrls.size} mappings`
-      );
 
       return true;
     } catch (error) {
@@ -117,11 +94,6 @@ class ResultDataLoader {
     )[0];
   }
 
-  getCarExpertUrl(make, model) {
-    const key = `${make.toLowerCase()}_${model.toLowerCase()}`;
-    return this.carexpertUrls.get(key) || null;
-  }
-
   loadVehicleData(vehicleId) {
     const vehicle = this.jatoDataset.find((v) => v.uid === vehicleId);
     if (!vehicle) {
@@ -130,11 +102,6 @@ class ResultDataLoader {
     }
 
     const review = this.findBestReviewMatch(
-      vehicle.make_display,
-      vehicle.model_display
-    );
-
-    const carexpertUrl = this.getCarExpertUrl(
       vehicle.make_display,
       vehicle.model_display
     );
@@ -151,13 +118,13 @@ class ResultDataLoader {
       year: vehicle.year,
       hasReview: !!review,
       reviewRating: review?.rating || null,
-      carexpertUrl: carexpertUrl,
+      reviewUrl: review?.original_url || null,
     };
   }
 
   async loadResults(rankedVehicleIds) {
     try {
-      if (!this.jatoDataset || !this.reviewsData || !this.carexpertUrls) {
+      if (!this.jatoDataset || !this.reviewsData) {
         await this.initialize();
       }
 

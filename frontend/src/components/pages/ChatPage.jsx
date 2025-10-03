@@ -27,7 +27,7 @@ const formatMessage = (text) => {
 
 const ChatPage = () => {
   const navigate = useNavigate()
-  const [searchResults, setSearchResults] = useState(null)
+  // const [searchResults, setSearchResults] = useState(null)
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -130,16 +130,14 @@ const ChatPage = () => {
 
       console.log("✅ Vector search complete:", vectorData.results.length, "results");
 
-      // Step 7: Display results
-      setSearchResults(vectorData.results);
-
-      const resultsMsg = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: `Here are your top recommendations, ranked by popularity in Australia:`,
-        timestamp: new Date(),
-        hasResults: true
-      };
+      // Step 7: Display results - store IN the message
+const resultsMsg = {
+  id: Date.now() + 1,
+  role: 'assistant',
+  content: `Here are your top recommendations, ranked by popularity in Australia:`,
+  timestamp: new Date(),
+  results: vectorData.results  // Store results here
+};
 
       setMessages(prev => [...prev, resultsMsg]);
 
@@ -176,10 +174,12 @@ const ChatPage = () => {
 
     try {
       // Build conversation history for Claude API
-      const conversationHistory = messages.map(msg => ({
-        role: msg.role === 'assistant' ? 'assistant' : 'user',
-        content: msg.content
-      }));
+      const conversationHistory = messages
+  .filter(msg => msg.id !== 1) // Skip initial greeting
+  .map(msg => ({
+    role: msg.role === 'assistant' ? 'assistant' : 'user',
+    content: msg.content
+  }));
       
       // Add current user message
       conversationHistory.push({
@@ -271,17 +271,17 @@ const ChatPage = () => {
               </div>
               
               {/* Display results after assistant messages with results */}
-              {message.role === 'assistant' && message.hasResults && searchResults && (
-                <div className="w-full mt-4 space-y-3">
-                  {searchResults.slice(0, 5).map((vehicle, index) => (
-                    <ChatResultCard 
-                      key={vehicle.vehicleId} 
-                      vehicle={vehicle} 
-                      rank={index + 1} 
-                    />
-                  ))}
-                </div>
-              )}
+{message.role === 'assistant' && message.results && (
+  <div className="w-full mt-4 space-y-3">
+    {message.results.slice(0, 5).map((vehicle, index) => (
+      <ChatResultCard 
+        key={vehicle.vehicleId} 
+        vehicle={vehicle} 
+        rank={index + 1} 
+      />
+    ))}
+  </div>
+)}
             </div>
           ))}
           
