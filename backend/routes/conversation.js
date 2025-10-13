@@ -51,7 +51,7 @@ WHEN ALL 4 CRITERIA ARE COMPLETE:
 Return ONLY this JSON structure (no other text before or after):
 {
   "searchReady": true,
-  "budget": "under 70k", // MUST return budget in EXACTLY one of these 4 formats: "under 50k", "over 100k", "around 45k", or "40k to 70k" (no variations like "up to", "$", or spelled-out numbers)
+  "budget": "under 70k", // MUST return budget in EXACTLY one of these 4 formats: "under 70k", "over 70k", "around 70k", "60k to 70k", or "open budget" (60 and 70 are example values, no variations like "up to", "$", or spelled-out numbers)
   "useCase": ["family 5 seats"], // MUST be from list: family 5 seats, family 6+ seats, light towing, heavy towing, lifestyle ute, chassis ute. If no match, leave empty.
   "bodyType": ["ute"],  //  MUST be from list: SUV, ute, sedan, hatchback, wagon, van, coupe, people mover, convertible
   "fuelType": ["diesel"], //  MUST be from list: petrol, diesel, hybrid, electric, plug-in hybrid
