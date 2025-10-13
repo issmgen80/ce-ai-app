@@ -63,7 +63,7 @@ ${v.chunkData}
 
 ANALYSIS INSTRUCTIONS:
 1. BRAND CHECK: If specific brands requested, eliminate vehicles with non-matching brands (set to 0% confidence)
-2. First eliminate any vehicles that fail hard constraints (garage fit, minimum towing, specific body type requirements, etc.)
+2. First eliminate any vehicles that fail hard constraints (garage fit, minimum towing, specific body type requirements, full-time or part-time 4WD)
 3. For remaining vehicles, score 0-100 based on how well they match user preferences
 4. Focus on actual data in the chunks - don't assume specs not present
 5. Keep reasoning brief (1-2 sentences max per vehicle), and only what is specifically related to USER REQUIREMENTS
