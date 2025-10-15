@@ -2,15 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '../common/BottomNav'
 import { handleConversation } from '../../utils/conversationHandler'
-import { convertToJatoLabels, validateJatoFilters } from '../../utils/jatoConverter'
-import { scanJatoDatabase, validateScanFilters, getNoMatchesMessage } from '../../utils/jatoScanner'
 import ChatResultCard from '../chat/ChatResultCard'
-
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-
-// Format claude message
+// Format message
 const formatMessage = (text) => {
   return text.split('\n').map((line, i) => (
     <span key={i}>
@@ -27,7 +23,6 @@ const formatMessage = (text) => {
 
 const ChatPage = () => {
   const navigate = useNavigate()
-  // const [searchResults, setSearchResults] = useState(null)
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -45,50 +40,42 @@ const ChatPage = () => {
   }, [messages])
 
   /**
-   * Execute vehicle search with JATO pre-filtering + vector search
+   * Execute vehicle search with backend pre-filtering + vector search
    */
   const executeSearch = async (criteria) => {
-    console.log("🔍 EXECUTING SEARCH WITH CRITERIA:", criteria);
-    
     try {
-      // Step 1: Convert to JATO labels
-      const jatoFilters = await convertToJatoLabels({
-        budget: criteria.budget,
-        useCase: criteria.useCase,
-        bodyType: criteria.bodyType,
-        fuelType: criteria.fuelType,
-        vectorRequirements: criteria.vectorRequirements || []
+      // Step 1: Pre-filter via backend API
+      const prefilterResponse = await fetch(`${API_URL}/api/prefilter`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          budget: criteria.budget,
+          useCase: criteria.useCase,
+          bodyType: criteria.bodyType,
+          fuelType: criteria.fuelType,
+          vectorRequirements: criteria.vectorRequirements || []
+        })
       });
 
-      // Step 2: Validate filters
-      if (!validateJatoFilters(jatoFilters)) {
-        throw new Error("Invalid JATO filter conversion");
+      if (!prefilterResponse.ok) {
+        throw new Error(`Pre-filter failed: ${prefilterResponse.status}`);
       }
 
-      const scanValidation = validateScanFilters(jatoFilters);
-      if (!scanValidation.isValid) {
-        throw new Error(`Filter validation failed: ${scanValidation.errors.join(', ')}`);
-      }
+      const prefilterData = await prefilterResponse.json();
 
-      // Step 3: Scan JATO database (pre-filtering)
-      console.log("📊 Scanning JATO database...");
-      const scanResults = scanJatoDatabase(jatoFilters);
-      console.log(`Found ${scanResults.matchCount} vehicles after pre-filtering`);
-
-      // Step 4: Check for no matches
-      if (scanResults.matchCount === 0) {
-        const noMatchMessage = getNoMatchesMessage(jatoFilters);
+      // Step 2: Check for no matches
+      if (!prefilterData.success) {
         const errorMsg = {
           id: Date.now(),
           role: 'assistant',
-          content: noMatchMessage,
+          content: prefilterData.message,
           timestamp: new Date()
         };
         setMessages(prev => [...prev, errorMsg]);
         return;
       }
 
-      // Step 5: Show searching message
+      // Step 3: Show searching message
       const searchingMsg = {
         id: Date.now(),
         role: 'assistant',
@@ -97,29 +84,18 @@ const ChatPage = () => {
       };
       setMessages(prev => [...prev, searchingMsg]);
 
-      /* SHOW SEARCHING MESSAGE WITH COUNT
-      const searchingMsg = {
-        id: Date.now(),
-        role: 'assistant',
-        content: `Found ${scanResults.matchCount} matching vehicles. Analyzing them now...`,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, searchingMsg]);
-      */
-
-      // Step 6: Execute vector search via backend API
-      console.log("🔍 Calling vector search API...");
+      // Step 4: Execute vector search via backend API
       const vectorResponse = await fetch(`${API_URL}/api/vector-search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          vectorRequirements: jatoFilters.vectorRequirements,
-          vehicleIds: scanResults.vehicleIds
+          vectorRequirements: prefilterData.vectorRequirements,
+          vehicleIds: prefilterData.vehicleIds
         })
       });
 
       if (!vectorResponse.ok) {
-        throw new Error(`API request failed: ${vectorResponse.status}`);
+        throw new Error(`Vector search failed: ${vectorResponse.status}`);
       }
 
       const vectorData = await vectorResponse.json();
@@ -128,21 +104,19 @@ const ChatPage = () => {
         throw new Error(vectorData.error || 'Vector search failed');
       }
 
-      console.log("✅ Vector search complete:", vectorData.results.length, "results");
-
-      // Step 7: Display results - store IN the message
-const resultsMsg = {
-  id: Date.now() + 1,
-  role: 'assistant',
-  content: `Here are your top recommendations, ranked by popularity in Australia:`,
-  timestamp: new Date(),
-  results: vectorData.results  // Store results here
-};
+      // Step 5: Display results - store IN the message
+      const resultsMsg = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: `Here are your top recommendations, ranked by popularity in Australia:`,
+        timestamp: new Date(),
+        results: vectorData.results
+      };
 
       setMessages(prev => [...prev, resultsMsg]);
 
     } catch (error) {
-      console.error("🚨 Search error:", error);
+      console.error("Search error:", error);
       const errorMsg = {
         id: Date.now(),
         role: 'assistant',
@@ -173,13 +147,13 @@ const resultsMsg = {
     setIsLoading(true);
 
     try {
-      // Build conversation history for Claude API
+      // Build conversation history for LLM API
       const conversationHistory = messages
-  .filter(msg => msg.id !== 1) // Skip initial greeting
-  .map(msg => ({
-    role: msg.role === 'assistant' ? 'assistant' : 'user',
-    content: msg.content
-  }));
+        .filter(msg => msg.id !== 1) // Skip initial greeting
+        .map(msg => ({
+          role: msg.role === 'assistant' ? 'assistant' : 'user',
+          content: msg.content
+        }));
       
       // Add current user message
       conversationHistory.push({
@@ -187,7 +161,7 @@ const resultsMsg = {
         content: currentInput
       });
 
-      // SINGLE Claude API call handles everything
+      // SINGLE LLM API call handles everything
       const result = await handleConversation(conversationHistory);
 
       if (result.type === 'search') {
@@ -262,26 +236,26 @@ const resultsMsg = {
                     : 'bg-gray-50 text-carexpert-black border border-gray-100'
                 }`}>
                   <p className="text-sm leading-relaxed">
-          {formatMessage(message.content)}
-        </p>
-        <p className="text-xs mt-2 opacity-70">
+                    {formatMessage(message.content)}
+                  </p>
+                  <p className="text-xs mt-2 opacity-70">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
               
               {/* Display results after assistant messages with results */}
-{message.role === 'assistant' && message.results && (
-  <div className="w-full mt-4 space-y-3">
-    {message.results.slice(0, 5).map((vehicle, index) => (
-      <ChatResultCard 
-        key={vehicle.vehicleId} 
-        vehicle={vehicle} 
-        rank={index + 1} 
-      />
-    ))}
-  </div>
-)}
+              {message.role === 'assistant' && message.results && (
+                <div className="w-full mt-4 space-y-3">
+                  {message.results.slice(0, 5).map((vehicle, index) => (
+                    <ChatResultCard 
+                      key={vehicle.vehicleId} 
+                      vehicle={vehicle} 
+                      rank={index + 1} 
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ))}
           

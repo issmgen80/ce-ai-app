@@ -2,7 +2,6 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 /**
- * SINGLE conversation handler - calls backend instead of Claude directly
  * @param {Array} conversationHistory - Full message history
  * @returns {Object} - { type: 'conversation' | 'search', message?: string, criteria?: Object }
  */
