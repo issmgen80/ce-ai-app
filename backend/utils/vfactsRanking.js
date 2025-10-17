@@ -27,14 +27,6 @@ class VFACTSRanker {
 
       // Need JATO dataset to get make/model for normalization
       this.jatoDataset = loadJatoDataset();
-      /*
-
-      const jatoPath = path.join(
-        __dirname,
-        "../../frontend/src/data/final-dataset-with-features.json"
-      );
-      const jatoData = fs.readFileSync(jatoPath, "utf8");
-      this.jatoDataset = JSON.parse(jatoData); */
 
       console.log(
         `✅ Loaded JATO dataset: ${this.jatoDataset.length} vehicles`
@@ -69,7 +61,7 @@ class VFACTSRanker {
         claudeResults.rankedVehicles.length === 0
       ) {
         console.log("❌ No vehicles to rank");
-        return { rankedVehicleIds: [] };
+        return { rankedVehicleIds: [], metadata: [] };
       }
 
       // Get sales volume for each vehicle
@@ -124,15 +116,15 @@ class VFACTSRanker {
         );
       });
 
-      // Return top 5 vehicle IDs with their metadata
-      const top5 = sorted.slice(0, 5);
+      // Return top 10 vehicle IDs with their metadata (increased from 5)
+      const top10 = sorted.slice(0, 10);
       console.log(
-        `\n✅ Returning top ${top5.length} vehicles by sales popularity`
+        `\n✅ Returning top ${top10.length} vehicles by sales popularity`
       );
 
       return {
-        rankedVehicleIds: top5.map((v) => v.vehicleId), // Just the ID string, not the whole object
-        metadata: top5.map((v) => ({
+        rankedVehicleIds: top10.map((v) => v.vehicleId),
+        metadata: top10.map((v) => ({
           vehicleId: v.vehicleId,
           matchConfidence: v.matchConfidence,
           reasoning: v.reasoning,
@@ -141,7 +133,7 @@ class VFACTSRanker {
       };
     } catch (error) {
       console.error("❌ VFACTS ranking failed:", error.message);
-      return { rankedVehicleIds: [] };
+      return { rankedVehicleIds: [], metadata: [] };
     }
   }
 }

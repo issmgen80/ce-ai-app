@@ -277,38 +277,24 @@ class VehicleSearch {
       });
       const queryEmbedding = queryResponse.data[0].embedding;
 
-      // Step 2: Extract make and base model (ignore variant details for broader search)
+      // Step 2: Extract make and model from vehicle name
       const nameParts = vehicleName.split(" ");
       const make = nameParts[0] || "";
+      const model = nameParts.slice(1).join(" ") || "";
 
-      // Take only first word of model (base model name)
-      // "Ranger Sport V6" -> "Ranger"
-      // "CX-5 Touring" -> "CX-5"
-      // "Hilux SR5" -> "Hilux"
-      const modelParts = nameParts.slice(1);
-      const baseModel = modelParts[0] || "";
-
-      // Store full name for Claude to use
-      const fullRequestedName = vehicleName;
-
-      console.log(
-        `🔎 Searching for: Make="${make}", Base Model="${baseModel}"`
-      );
-      console.log(`🎯 Full requested: "${fullRequestedName}"`);
+      console.log(`🔎 Searching for: Make="${make}", Model="${model}"`);
 
       // Step 3: First find vehicle_ids from identity chunks
-      // Search for Make AND Model in same content (more precise than OR)
       const identityQuery = `
-  SELECT DISTINCT vehicle_id, content
-  FROM vehicle_chunks 
-  WHERE category = 'feature_vehicle_identity'
-    AND content ILIKE $1
-    AND content ILIKE $2
-`;
+      SELECT DISTINCT vehicle_id
+      FROM vehicle_chunks 
+      WHERE category = 'feature_vehicle_identity'
+        AND (content ILIKE $1 OR content ILIKE $2)
+    `;
 
       const identityResult = await this.pool.query(identityQuery, [
         `%${make}%`,
-        `%${baseModel}%`,
+        `%${model}%`,
       ]);
 
       const vehicleIds = identityResult.rows.map((row) => row.vehicle_id);

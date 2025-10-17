@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '../common/BottomNav'
-import { handleConversation } from '../../utils/conversationHandler'
+import { handleConversation, handleDataLookup, handlePrefilter, handleVectorSearch } from '../../utils/apiHandler'
 import ChatResultCard from '../chat/ChatResultCard'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-// Format message
+// Format claude message
 const formatMessage = (text) => {
   return text.split('\n').map((line, i) => (
     <span key={i}>
@@ -33,6 +33,9 @@ const ChatPage = () => {
   ])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [expandedResults, setExpandedResults] = useState({}) // Track which result sets are expanded
+  const [currentMode, setCurrentMode] = useState(null); // 'recommendations' | 'data-lookup' | null
+  const [isConversationTooLong, setIsConversationTooLong] = useState(false)
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
@@ -45,23 +48,13 @@ const ChatPage = () => {
   const executeSearch = async (criteria) => {
     try {
       // Step 1: Pre-filter via backend API
-      const prefilterResponse = await fetch(`${API_URL}/api/prefilter`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          budget: criteria.budget,
-          useCase: criteria.useCase,
-          bodyType: criteria.bodyType,
-          fuelType: criteria.fuelType,
-          vectorRequirements: criteria.vectorRequirements || []
-        })
-      });
-
-      if (!prefilterResponse.ok) {
-        throw new Error(`Pre-filter failed: ${prefilterResponse.status}`);
-      }
-
-      const prefilterData = await prefilterResponse.json();
+      const prefilterData = await handlePrefilter(
+  criteria.budget,
+  criteria.useCase,
+  criteria.bodyType,
+  criteria.fuelType,
+  criteria.vectorRequirements || []
+);
 
       // Step 2: Check for no matches
       if (!prefilterData.success) {
@@ -79,26 +72,16 @@ const ChatPage = () => {
       const searchingMsg = {
         id: Date.now(),
         role: 'assistant',
-        content: `Found matching vehicles! Analyzing them now...`,
+        content: `Searching...`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, searchingMsg]);
 
       // Step 4: Execute vector search via backend API
-      const vectorResponse = await fetch(`${API_URL}/api/vector-search`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          vectorRequirements: prefilterData.vectorRequirements,
-          vehicleIds: prefilterData.vehicleIds
-        })
-      });
-
-      if (!vectorResponse.ok) {
-        throw new Error(`Vector search failed: ${vectorResponse.status}`);
-      }
-
-      const vectorData = await vectorResponse.json();
+      const vectorData = await handleVectorSearch(
+  prefilterData.vectorRequirements,
+  prefilterData.vehicleIds
+);
 
       if (!vectorData.success) {
         throw new Error(vectorData.error || 'Vector search failed');
@@ -128,57 +111,93 @@ const ChatPage = () => {
   };
 
   /**
-   * Handle user message - SIMPLIFIED SINGLE CALL
-   */
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+ * Execute data lookup for specific vehicle question
+ */
+const executeDataLookup = async (vehicleQuery, vehicleName) => {
+  try {
+    console.log(`🔍 Data lookup: ${vehicleQuery}`);
 
-    // Add user message
-    const userMsg = {
-      id: Date.now(),
-      role: 'user',
-      content: inputMessage.trim(),
+    const data = await handleDataLookup(vehicleQuery, vehicleName);
+
+    // Display answer
+    const answerMsg = {
+      id: Date.now() + 1,
+      role: 'assistant',
+      content: data.answer,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMsg]);
-    const currentInput = inputMessage.trim();
-    setInputMessage('');
-    setIsLoading(true);
+    setMessages(prev => [...prev, answerMsg]);
+    
+  } catch (error) {
+    console.error("Data lookup error:", error);
+    
+    const errorMsg = {
+      id: Date.now(),
+      role: 'assistant',
+      content: error.message, // Should show rate limit message
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, errorMsg]);
+  }
+};
 
-    try {
-      // Build conversation history for LLM API
-      const conversationHistory = messages
-        .filter(msg => msg.id !== 1) // Skip initial greeting
-        .map(msg => ({
-          role: msg.role === 'assistant' ? 'assistant' : 'user',
-          content: msg.content
-        }));
-      
-      // Add current user message
-      conversationHistory.push({
-        role: 'user',
-        content: currentInput
-      });
+  /**
+ * Handle user message with mode detection
+ */
+const handleSendMessage = async () => {
+  if (!inputMessage.trim() || isLoading) return;
 
-      // SINGLE LLM API call handles everything
-      const result = await handleConversation(conversationHistory);
+    // Check message count limit
+  if (messages.length >= 50) {
+    setIsConversationTooLong(true);
+    return;
+  }
 
-      if (result.type === 'search') {
-        // Search ready - show transition message and execute search
-        const transitionMsg = {
-          id: Date.now() + 1,
-          role: 'assistant',
-          content: result.message,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, transitionMsg]);
-        
-        // Execute search with criteria
-        await executeSearch(result.criteria);
-        
-      } else {
-        // Continue conversation
+  // Check message count limit
+if (messages.length >= 50) {
+  setIsConversationTooLong(true);
+  return;
+}
+
+  // Add user message
+  const userMsg = {
+    id: Date.now(),
+    role: 'user',
+    content: inputMessage.trim(),
+    timestamp: new Date()
+  };
+
+  setMessages(prev => [...prev, userMsg]);
+  const currentInput = inputMessage.trim();
+  setInputMessage('');
+  setIsLoading(true);
+
+  try {
+    // Build conversation history for Claude API (last 10 messages only)
+const recentMessages = messages
+  .filter(msg => msg.id !== 1) // Skip initial greeting
+  .slice(-10); // Take only last 10 messages
+
+const conversationHistory = recentMessages.map(msg => ({
+  role: msg.role === 'assistant' ? 'assistant' : 'user',
+  content: msg.content
+}));
+
+// Add current user message
+conversationHistory.push({
+  role: 'user',
+  content: currentInput
+});
+
+console.log(`📤 Sending ${conversationHistory.length} messages to Claude`);
+
+    // Single Claude API call handles mode detection
+    const result = await handleConversation(conversationHistory);
+
+    switch(result.type) {
+      case 'conversation':
+        // Regular conversation response
         const botMsg = {
           id: Date.now() + 1,
           role: 'assistant',
@@ -186,22 +205,89 @@ const ChatPage = () => {
           timestamp: new Date()
         };
         setMessages(prev => [...prev, botMsg]);
-      }
-
-    } catch (error) {
-      console.error('Message handling error:', error);
-      
-      const errorMsg = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: error.message || "Sorry, I'm having trouble connecting. Please try again in a moment.",
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, errorMsg]);
-    } finally {
-      setIsLoading(false);
+        
+        // Update mode if in recommendations
+        if (result.mode === 'recommendations') {
+          setCurrentMode('recommendations');
+        }
+        break;
+        
+      case 'data-lookup':
+        // NEW: Data lookup interruption
+        setCurrentMode('data-lookup');
+        
+        // Show transition message
+        const transitionMsg = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: result.message || "Let me look that up for you...",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, transitionMsg]);
+        
+        // Execute data lookup
+        await executeDataLookup(result.vehicleQuery, result.vehicleName);
+        
+        // If interrupted search, offer to resume
+        if (result.incompleteSearch) {
+          const resumeMsg = {
+            id: Date.now() + 2,
+            role: 'assistant',
+            content: "Would you like me to continue finding vehicles that match your original search?",
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, resumeMsg]);
+        }
+        break;
+        
+      case 'search':
+        // Complete recommendations search ready
+        const searchMsg = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: result.message,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, searchMsg]);
+        
+        // Execute search with criteria
+        await executeSearch(result.criteria);
+        
+        // Clear mode
+        setCurrentMode(null);
+        break;
     }
+
+  } catch (error) {
+  console.error('Message handling error:', error);
+  
+  // Check if conversation too long
+  if (error.message && error.message.includes("Conversation too long")) {
+    setIsConversationTooLong(true);
+    return;
+  }
+  
+  const errorMsg = {
+    id: Date.now() + 1,
+    role: 'assistant',
+    content: error.message || "Sorry, I'm having trouble connecting. Please try again in a moment.",
+    timestamp: new Date()
+  };
+  
+  setMessages(prev => [...prev, errorMsg]);
+} finally {
+  setIsLoading(false);
+}
+};
+
+  /**
+   * Toggle expanded view for a specific result set
+   */
+  const toggleExpandResults = (messageId) => {
+    setExpandedResults(prev => ({
+      ...prev,
+      [messageId]: !prev[messageId]
+    }));
   };
 
   return (
@@ -247,13 +333,52 @@ const ChatPage = () => {
               {/* Display results after assistant messages with results */}
               {message.role === 'assistant' && message.results && (
                 <div className="w-full mt-4 space-y-3">
-                  {message.results.slice(0, 5).map((vehicle, index) => (
-                    <ChatResultCard 
-                      key={vehicle.vehicleId} 
-                      vehicle={vehicle} 
-                      rank={index + 1} 
-                    />
-                  ))}
+                  {/* Determine how many results to show */}
+                  {(() => {
+                    const isExpanded = expandedResults[message.id];
+                    const totalResults = message.results.length;
+                    const displayCount = isExpanded ? totalResults : Math.min(5, totalResults);
+                    const remainingCount = totalResults - 5;
+
+                    return (
+                      <>
+                        {/* Display result cards */}
+                        {message.results.slice(0, displayCount).map((vehicle, index) => (
+                          <ChatResultCard 
+                            key={vehicle.vehicleId} 
+                            vehicle={vehicle} 
+                            rank={index + 1} 
+                          />
+                        ))}
+
+                        {/* Show More button - only if more than 5 results and not expanded */}
+                        {totalResults > 5 && !isExpanded && (
+                          <button
+                            onClick={() => toggleExpandResults(message.id)}
+                            className="w-full py-3 px-4 bg-carexpert-red text-white hover:bg-red-700 rounded-xl font-semibold transition-all duration-200 text-sm flex items-center justify-center gap-2"
+                          >
+                            <span>Show {remainingCount} more recommendation{remainingCount === 1 ? '' : 's'}</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {/* Show Less button - only if expanded */}
+                        {isExpanded && totalResults > 5 && (
+                          <button
+                            onClick={() => toggleExpandResults(message.id)}
+                            className="w-full py-3 px-4 bg-white border-2 border-gray-300 hover:border-carexpert-red text-gray-700 hover:text-carexpert-red rounded-xl font-medium transition-all duration-200 text-sm flex items-center justify-center gap-2"
+                          >
+                            <span>Show less</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                            </svg>
+                          </button>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -277,30 +402,62 @@ const ChatPage = () => {
       </div>
 
       {/* Fixed input area */}
-      <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-100 p-4 max-w-md mx-auto">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="Tell me what car you're looking for..."
-            className="flex-1 px-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-carexpert-red focus:border-transparent text-sm"
-            disabled={isLoading}
-          />
-          <button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isLoading}
-            className={`px-6 py-3 rounded-full font-medium transition-all duration-200 text-sm ${
-              !inputMessage.trim() || isLoading
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-carexpert-red text-white hover:bg-red-700 hover:shadow-lg'
-            }`}
-          >
-            Send
-          </button>
-        </div>
+<div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-100 p-4 max-w-md mx-auto">
+  {/* Warning at 45 messages */}
+  {messages.length >= 45 && messages.length < 50 && !isConversationTooLong && (
+    <div className="mb-3 px-4 py-2 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+      ⚠️ Approaching message limit ({messages.length}/50). Consider starting a new conversation soon.
+    </div>
+  )}
+  
+  {/* Blocked at 50 messages */}
+  {isConversationTooLong && (
+    <div className="mb-3 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
+      <p className="text-sm text-red-800 mb-2">
+        💬 You've reached the maximum conversation length (50 messages).
+      </p>
+      <button
+        onClick={() => window.location.reload()}
+        className="w-full px-4 py-2 bg-carexpert-red text-white rounded-lg font-medium hover:bg-red-700"
+      >
+        Start New Conversation
+      </button>
+    </div>
+  )}
+  
+  <div className="flex gap-3">
+  <div className="flex-1">
+    <input
+      type="text"
+      value={inputMessage}
+      onChange={(e) => setInputMessage(e.target.value)}
+      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+      placeholder="Tell me what car you're looking for..."
+      maxLength={500}
+      className="w-full px-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-carexpert-red focus:border-transparent text-sm"
+      disabled={isLoading || isConversationTooLong}
+    />
+    {/* Character counter */}
+    {inputMessage.length > 400 && (
+      <div className={`text-xs mt-1 text-right ${inputMessage.length >= 500 ? 'text-red-600' : 'text-gray-500'}`}>
+        {inputMessage.length}/500
       </div>
+    )}
+  </div>
+    <button
+      onClick={handleSendMessage}
+      disabled={!inputMessage.trim() || isLoading || isConversationTooLong || inputMessage.length > 500}
+      className={`px-6 py-3 rounded-full font-medium transition-all duration-200 text-sm ${
+        !inputMessage.trim() || isLoading || isConversationTooLong || inputMessage.length > 500
+          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          : 'bg-carexpert-red text-white hover:bg-red-700 hover:shadow-lg'
+      }`}
+    >
+      Send
+    </button>
+  </div>
+</div>
+          
 
       <BottomNav />
     </div>

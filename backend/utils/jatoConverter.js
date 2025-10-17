@@ -189,10 +189,8 @@ const convertUseCases = async (useCaseArray) => {
     "reliable",
     "safe",
     "easy to park",
-    "comfortable",
     "quiet",
     "practical",
-    "tray",
     "carrying gear",
     "performance",
     "fun driving",
@@ -201,13 +199,10 @@ const convertUseCases = async (useCaseArray) => {
     "highway driving",
     "trade work",
     "sports equipment",
-    "dogs",
     "pets",
     "bikes",
     "bicycles",
-    "city",
     "city driving",
-    "commuting",
   ]);
 
   useCaseArray.forEach((useCase) => {
