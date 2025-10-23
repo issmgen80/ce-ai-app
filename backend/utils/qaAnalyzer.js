@@ -6,7 +6,7 @@ const anthropic = new Anthropic({
 });
 
 /**
- * Answer specific vehicle data questions using Claude Haiku 4.5
+ * Answer specific vehicle data questions using Claude Sonnet 4.5
  * @param {Array} vehicleResults - Array of vehicles with chunks
  * @param {string} userQuestion - Original user question
  * @returns {string} - Natural language answer

@@ -137,6 +137,63 @@ const CATEGORY_MAP = {
   headlights: ["feature_exterior_lights"],
   led: ["feature_exterior_lights"],
 
+  // Cargo & Storage
+  boot: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  "boot space": [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  cargo: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  "cargo space": [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  storage: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  trunk: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  tray: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  "tray size": [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  bed: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  "bed size": [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+  tub: [
+    "calc_cargo_capacity",
+    "calc_physical_dimensions",
+    "feature_vehicle_identity",
+  ],
+
   // Off-road
   "off-road": [
     "calc_offroad_specs",
